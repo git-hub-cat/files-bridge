@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const magic_1 = require("../../magic");
 const payCallback_dto_1 = require("./payCallback.dto");
+const httpService_1 = require("../../utils/httpService");
 const nanoid_1 = require("nanoid");
 let TestController = class TestController {
     async createPayOrder() {
@@ -24,6 +25,13 @@ let TestController = class TestController {
             merchantUserId: (0, nanoid_1.nanoid)(),
         };
         magic_1.logger.info('支付参数==', data);
+        const res = await (0, httpService_1.default)({
+            url: 'https://pix.nascent.com/open-api/pay/payment',
+            method: 'post',
+            headers: { Authorization: 'Basic QWxhZGRpbjpPcGVuU2VzYW1l' },
+            data
+        });
+        magic_1.logger.info("createPayOrder==", res);
     }
     async payCallback(pcd) {
         magic_1.logger.info("支付回调数据==", pcd);
