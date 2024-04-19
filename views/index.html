@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>web页面</title>
+</head>
+
+<body>
+  <p>web页面</p>
+  <div>
+    <button id="btn">点击支付0.1元</button>
+  </div>
+  <script>
+    let boo = true;
+    if (boo) {
+      const btn = document.querySelector('#btn');
+      btn.addEventListener('click', () => {
+        const url = "/test/createPayOrder";
+        const opts = { method: 'GET' };
+        fetch(url, opts).then(res => {
+          alert('调用成功');
+        }).catch(err => {
+          alert('调用失败');
+        });
+        boo = false;
+      });
+    }
+  </script>
+</body>
+
+</html>

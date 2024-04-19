@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
+const koaStatic = require("koa-static");
+const koaMount = require("koa-mount");
+const staticUrl = path.join(__dirname, "../../static/");
+const staticMiddle = koaMount("/static", koaStatic(staticUrl));
+const htmlUrl = path.join(__dirname, "../../views/");
+const htmlMiddle = koaStatic(htmlUrl);
+exports.default = [staticMiddle, htmlMiddle];
