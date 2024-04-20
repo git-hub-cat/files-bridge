@@ -61,6 +61,10 @@ __decorate([
     IsString(),
     __metadata("design:type", String)
 ], PayCallbackDto.prototype, "traceId", void 0);
+__decorate([
+    IsNumber(),
+    __metadata("design:type", Number)
+], PayCallbackDto.prototype, "createTimeL", void 0);
 PayCallbackDto = __decorate([
     VerifyTool()
 ], PayCallbackDto);
