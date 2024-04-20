@@ -20,7 +20,7 @@ const nanoid_1 = require("nanoid");
 let TestController = class TestController {
     async createPayOrder() {
         const data = {
-            amount: "10",
+            amount: "100",
             merchantOrderId: (0, nanoid_1.nanoid)(),
             notifyUrl: 'http://206.119.117.177/test/payCallback',
             merchantUserId: (0, nanoid_1.nanoid)(),

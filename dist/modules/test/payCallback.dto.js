@@ -20,10 +20,6 @@ __decorate([
 __decorate([
     IsString(),
     __metadata("design:type", String)
-], PayCallbackDto.prototype, "msg", void 0);
-__decorate([
-    IsString(),
-    __metadata("design:type", String)
 ], PayCallbackDto.prototype, "status", void 0);
 __decorate([
     IsString(),
