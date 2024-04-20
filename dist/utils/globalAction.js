@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dealFile = exports.equalObj = exports.waitFor = exports.notEmptyAry = exports.notEmptyObj = exports.guid = exports.isNumber = exports.deepClone = exports.getType = exports.isDev = void 0;
+exports.dealFile = exports.equalObj = exports.base64ToStr = exports.strToBase64 = exports.waitFor = exports.notEmptyAry = exports.notEmptyObj = exports.guid = exports.isNumber = exports.deepClone = exports.getType = exports.isDev = void 0;
 const fs = require("fs");
 const path = require("path");
 exports.isDev = process.env.NODE_ENV === "development";
@@ -56,6 +56,14 @@ const waitFor = (time = 0) => {
     return new Promise((resolve) => setTimeout(resolve, time));
 };
 exports.waitFor = waitFor;
+const strToBase64 = (str) => {
+    return Buffer.from(str).toString("base64");
+};
+exports.strToBase64 = strToBase64;
+const base64ToStr = (b64) => {
+    return Buffer.from(b64, "base64").toString();
+};
+exports.base64ToStr = base64ToStr;
 const equalObj = (obj1, obj2) => {
     let boo = true;
     for (const k in obj1) {
