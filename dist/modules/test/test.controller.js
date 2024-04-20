@@ -27,12 +27,14 @@ let TestController = class TestController {
         };
         magic_1.logger.info('支付参数==', data);
         const strBasic = (0, globalAction_1.strToBase64)('11095110845459:skpysepkrud8pc4zm7wc4algrt9z5h06bu');
-        const res = await (0, httpService_1.default)({
+        const opts = {
             url: 'https://pix.cashpag.com/open-api/pay/payment',
             method: 'post',
             headers: { Authorization: `Basic ${strBasic}` },
             data
-        });
+        };
+        magic_1.logger.info('调接口参数==', opts);
+        const res = await (0, httpService_1.default)(opts);
         magic_1.logger.info("支付结果==", res);
     }
     async payCallback(pcd) {
