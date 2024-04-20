@@ -18,33 +18,13 @@ __decorate([
     __metadata("design:type", Number)
 ], PayCallbackDto.prototype, "code", void 0);
 __decorate([
-    IsString(),
-    __metadata("design:type", String)
-], PayCallbackDto.prototype, "status", void 0);
-__decorate([
-    IsString(),
-    __metadata("design:type", String)
-], PayCallbackDto.prototype, "payUrl", void 0);
-__decorate([
-    IsString(),
-    __metadata("design:type", String)
+    IsNumber(),
+    __metadata("design:type", Number)
 ], PayCallbackDto.prototype, "amount", void 0);
 __decorate([
-    IsString(),
-    __metadata("design:type", String)
+    IsNumber(),
+    __metadata("design:type", Number)
 ], PayCallbackDto.prototype, "fee", void 0);
-__decorate([
-    IsString(),
-    __metadata("design:type", String)
-], PayCallbackDto.prototype, "realPayAmount", void 0);
-__decorate([
-    IsString(),
-    __metadata("design:type", String)
-], PayCallbackDto.prototype, "createTimeL", void 0);
-__decorate([
-    IsString(),
-    __metadata("design:type", String)
-], PayCallbackDto.prototype, "orderId", void 0);
 __decorate([
     IsString(),
     __metadata("design:type", String)
@@ -52,7 +32,23 @@ __decorate([
 __decorate([
     IsString(),
     __metadata("design:type", String)
+], PayCallbackDto.prototype, "msg", void 0);
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
+], PayCallbackDto.prototype, "orderId", void 0);
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
 ], PayCallbackDto.prototype, "payType", void 0);
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
+], PayCallbackDto.prototype, "payUrl", void 0);
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
+], PayCallbackDto.prototype, "realPayAmount", void 0);
 __decorate([
     IsString(),
     __metadata("design:type", String)
@@ -60,11 +56,11 @@ __decorate([
 __decorate([
     IsString(),
     __metadata("design:type", String)
-], PayCallbackDto.prototype, "traceId", void 0);
+], PayCallbackDto.prototype, "status", void 0);
 __decorate([
     IsString(),
     __metadata("design:type", String)
-], PayCallbackDto.prototype, "transferReceipt", void 0);
+], PayCallbackDto.prototype, "traceId", void 0);
 PayCallbackDto = __decorate([
     VerifyTool()
 ], PayCallbackDto);
