@@ -17,11 +17,57 @@ const config_1 = require("./config");
 const gameBet_dto_1 = require("./gameBet.dto");
 let TransController = class TransController {
     balance(account) {
-        const data = { balance: config_1.uInfo.balance, currency: "CNY" };
+        const data = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(data);
     }
-    gameBet(gab) {
-        console.log(gab);
+    gameBet(gbd) {
+        magic_1.logger.info("game/bet传入参数::", gbd);
+        const data = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        return (0, config_1.responSess)(data);
+    }
+    gameEndround(ged) {
+        magic_1.logger.info("game/endround传入参数::", ged);
+        const data = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        return (0, config_1.responSess)(data);
+    }
+    gameRollout(grod) {
+        magic_1.logger.info("game/rollout传入参数::", grod);
+        const data = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        return (0, config_1.responSess)(data);
+    }
+    gameTakeall(gtd) {
+        magic_1.logger.info("game/takeall传入参数::", gtd);
+        const data = {
+            amount: config_1.uInfo.balance,
+            balance: 0,
+            currency: config_1.uInfo.currency
+        };
+        return (0, config_1.responSess)(data);
+    }
+    gameRollin(grid) {
+        magic_1.logger.info("game/rollin传入参数::", grid);
+        const data = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        return (0, config_1.responSess)(data);
+    }
+    gameDebit(gdbd) {
+        magic_1.logger.info("game/debit传入参数::", gdbd);
+        const data = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        return (0, config_1.responSess)(data);
+    }
+    gameCredit(gcdd) {
+        magic_1.logger.info("game/credit传入参数::", gcdd);
+        const data = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        return (0, config_1.responSess)(data);
+    }
+    userPayoff(upfd) {
+        magic_1.logger.info("game/payoff传入参数::", upfd);
+        const data = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        return (0, config_1.responSess)(data);
+    }
+    gameRefund(mtcode) {
+        magic_1.logger.info("game/refund传入参数::", mtcode);
+        const data = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        return (0, config_1.responSess)(data);
     }
 };
 __decorate([
@@ -37,11 +83,74 @@ __decorate([
     (0, magic_1.BareOut)(),
     __param(0, (0, magic_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [gameBet_dto_1.default]),
+    __metadata("design:paramtypes", [gameBet_dto_1.GameBetDto]),
     __metadata("design:returntype", void 0)
 ], TransController.prototype, "gameBet", null);
+__decorate([
+    (0, magic_1.Post)('game/endround'),
+    (0, magic_1.BareOut)(),
+    __param(0, (0, magic_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [gameBet_dto_1.GameEndroundDto]),
+    __metadata("design:returntype", void 0)
+], TransController.prototype, "gameEndround", null);
+__decorate([
+    (0, magic_1.Post)('game/rollout'),
+    (0, magic_1.BareOut)(),
+    __param(0, (0, magic_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [gameBet_dto_1.GameRolloutDto]),
+    __metadata("design:returntype", void 0)
+], TransController.prototype, "gameRollout", null);
+__decorate([
+    (0, magic_1.Post)('game/takeall'),
+    (0, magic_1.BareOut)(),
+    __param(0, (0, magic_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [gameBet_dto_1.GameTakeallDto]),
+    __metadata("design:returntype", void 0)
+], TransController.prototype, "gameTakeall", null);
+__decorate([
+    (0, magic_1.Post)('game/rollin'),
+    (0, magic_1.BareOut)(),
+    __param(0, (0, magic_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [gameBet_dto_1.GameRollinDto]),
+    __metadata("design:returntype", void 0)
+], TransController.prototype, "gameRollin", null);
+__decorate([
+    (0, magic_1.Post)('game/debit'),
+    (0, magic_1.BareOut)(),
+    __param(0, (0, magic_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [gameBet_dto_1.GameDebitDto]),
+    __metadata("design:returntype", void 0)
+], TransController.prototype, "gameDebit", null);
+__decorate([
+    (0, magic_1.Post)('game/credit'),
+    (0, magic_1.BareOut)(),
+    __param(0, (0, magic_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [gameBet_dto_1.GameCreditDto]),
+    __metadata("design:returntype", void 0)
+], TransController.prototype, "gameCredit", null);
+__decorate([
+    (0, magic_1.Post)('user/payoff'),
+    (0, magic_1.BareOut)(),
+    __param(0, (0, magic_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [gameBet_dto_1.UserPayoffDto]),
+    __metadata("design:returntype", void 0)
+], TransController.prototype, "userPayoff", null);
+__decorate([
+    (0, magic_1.Post)('game/refund'),
+    (0, magic_1.BareOut)(),
+    __param(0, (0, magic_1.Body)('mtcode')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], TransController.prototype, "gameRefund", null);
 TransController = __decorate([
-    (0, magic_1.Controller)('transaction'),
-    (0, magic_1.Auth)()
+    (0, magic_1.Controller)('transaction')
 ], TransController);
 exports.default = TransController;

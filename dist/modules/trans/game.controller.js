@@ -27,7 +27,7 @@ let GameController = class GameController {
             data: {
                 account: config_1.uInfo.account,
                 gamehall: config_1.gamehall,
-                gamecode: "15",
+                gamecode: "52",
                 gameplat: 'web',
                 lang: 'en'
             },
