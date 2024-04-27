@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dealFile = exports.equalObj = exports.base64ToStr = exports.strToBase64 = exports.waitFor = exports.notEmptyAry = exports.notEmptyObj = exports.guid = exports.isNumber = exports.deepClone = exports.getType = exports.isDev = void 0;
+exports.dealFile = exports.numPlus = exports.numMinus = exports.equalObj = exports.base64ToStr = exports.strToBase64 = exports.waitFor = exports.notEmptyAry = exports.notEmptyObj = exports.guid = exports.isNumber = exports.deepClone = exports.getType = exports.isDev = void 0;
 const fs = require("fs");
 const path = require("path");
+const bignumber_js_1 = require("bignumber.js");
 exports.isDev = process.env.NODE_ENV === "development";
 const getType = (data) => Object.prototype.toString.call(data).slice(8, -1);
 exports.getType = getType;
@@ -75,6 +76,24 @@ const equalObj = (obj1, obj2) => {
     return boo;
 };
 exports.equalObj = equalObj;
+const numMinus = (num1, num2) => {
+    if (!num1)
+        num1 = 0;
+    if (!num2)
+        num2 = 0;
+    const str = (0, bignumber_js_1.default)(num1).minus(num2).toFixed(4);
+    return Number(str);
+};
+exports.numMinus = numMinus;
+const numPlus = (num1, num2) => {
+    if (!num1)
+        num1 = 0;
+    if (!num2)
+        num2 = 0;
+    const str = (0, bignumber_js_1.default)(num1).plus(num2).toFixed(4);
+    return Number(str);
+};
+exports.numPlus = numPlus;
 const dealFile = (files) => {
     const execute = (file) => {
         const prefix = path.extname(file.originalFilename);

@@ -34,9 +34,10 @@ const packingRou = (rou, instance) => {
     router_1.default[method](path, async (ctx, next) => {
         const { unit, query, params, user = {} } = ctx;
         const { body, files = {} } = ctx.request;
+        const ctxParams = { query, body, params };
         try {
             (0, tools_1.notEmptyObj)(params) && checkParams(params, unit);
-            const ary = packingParams(parameter, query, body, params, user, files);
+            const ary = packingParams(parameter, query, body, params, user, files, ctxParams);
             let result = await action.call(instance, ...ary);
             if (result === undefined)
                 result = {};
@@ -72,7 +73,7 @@ const checkParams = (params, unit) => {
         }
     }
 };
-const packingParams = (parameter, query, body, params, user, files) => {
+const packingParams = (parameter, query, body, params, user, files, ctxParams) => {
     const ary = [];
     for (const item of parameter) {
         const { loc, dataType, key } = item;
@@ -97,6 +98,11 @@ const packingParams = (parameter, query, body, params, user, files) => {
             if ((0, tools_1.getType)(files) !== "Object")
                 files = {};
             ary.push(files[key]);
+            continue;
+        }
+        if (loc === "CtxParams") {
+            ary.push(ctxParams);
+            continue;
         }
     }
     return ary;

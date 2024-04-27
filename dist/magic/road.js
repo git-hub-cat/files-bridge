@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Files = exports.UserInfo = exports.Params = exports.Body = exports.Query = void 0;
+exports.CtxParams = exports.Files = exports.UserInfo = exports.Params = exports.Body = exports.Query = void 0;
 require("reflect-metadata");
 const hub_1 = require("./hub");
 const tools_1 = require("./tools");
@@ -49,3 +49,10 @@ const Files = (key) => {
     };
 };
 exports.Files = Files;
+const CtxParams = () => {
+    return (proto, name, idx) => {
+        const types = getParaTypes(proto, name);
+        hub_1.hub.addPoadInfo({ clazz: proto.constructor, name, idx, loc: "CtxParams", dataType: types[idx] });
+    };
+};
+exports.CtxParams = CtxParams;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JSONStringify = exports.BareOut = exports.plainToClass = exports.logger = exports.Inject = exports.Injectable = exports.dataDecrypt = exports.dataEncrypt = exports.pwdDecrypt = exports.pwdEncrypt = exports.clock = exports.Files = exports.UserInfo = exports.Params = exports.Body = exports.Query = exports.Column = exports.Entity = exports.Del = exports.Put = exports.Post = exports.Get = exports.Controller = exports.validator = exports.exception = exports.NoAuth = exports.Auth = exports.MagicFactory = void 0;
+exports.JSONStringify = exports.BareOut = exports.plainToClass = exports.logger = exports.Inject = exports.Injectable = exports.dataDecrypt = exports.dataEncrypt = exports.pwdDecrypt = exports.pwdEncrypt = exports.clock = exports.CtxParams = exports.Files = exports.UserInfo = exports.Params = exports.Body = exports.Query = exports.Column = exports.Entity = exports.Del = exports.Put = exports.Post = exports.Get = exports.Controller = exports.validator = exports.exception = exports.NoAuth = exports.Auth = exports.MagicFactory = void 0;
 const magic_1 = require("./magic");
 exports.MagicFactory = magic_1.default;
 const auth_1 = require("./auth");
@@ -26,6 +26,7 @@ Object.defineProperty(exports, "Body", { enumerable: true, get: function () { re
 Object.defineProperty(exports, "Params", { enumerable: true, get: function () { return road_1.Params; } });
 Object.defineProperty(exports, "UserInfo", { enumerable: true, get: function () { return road_1.UserInfo; } });
 Object.defineProperty(exports, "Files", { enumerable: true, get: function () { return road_1.Files; } });
+Object.defineProperty(exports, "CtxParams", { enumerable: true, get: function () { return road_1.CtxParams; } });
 const schedule_1 = require("./schedule");
 exports.clock = schedule_1.default;
 const pwdEncrypt_1 = require("./pwdEncrypt");
