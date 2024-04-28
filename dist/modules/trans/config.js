@@ -7,8 +7,8 @@ exports.Authorization = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiI2Nj
 exports.gamehall = "cq9";
 exports.uInfo = {
     account: 'Cbxy3mldOjcoZYOA61dsE',
-    currency: 'CNY',
-    balance: 1000,
+    currency: 'BRL',
+    balance: 10000,
     token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkNieHkzbWxkT2pjb1pZT0E2MWRzRSIsImlhdCI6MTcxMzk2MzUyMywiZXhwIjo0MjM2ODQzNTIzfQ.APVeT8b3PlsyCyOxY93ycCNik-eBJm7Boa8qzc9hKr8'
 };
 exports.betRecord = [];
@@ -19,9 +19,9 @@ const responSess = (data = null) => {
     };
 };
 exports.responSess = responSess;
-const responFail = (data = null, code = '0') => {
+const responFail = (code) => {
     return {
-        data,
+        data: null,
         status: { code, message: "Success", datetime: moment().format('YYYY-MM-DD HH:mm:ss') }
     };
 };

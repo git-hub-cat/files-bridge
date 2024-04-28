@@ -17,14 +17,11 @@ const config_1 = require("./config");
 const globalAction_1 = require("../../utils/globalAction");
 ;
 const gameBet_dto_1 = require("./gameBet.dto");
-const badParas = { msg: 'Bad parameters', code: '5' };
-const badAccount = { msg: 'Your account or password is incorrect', code: '14' };
-const balanceLess = { msg: 'Insufficient balance', code: '1' };
 let TransController = class TransController {
     balance(account) {
         magic_1.logger.info("balance/传入参数::", account);
         if (account !== config_1.uInfo.account) {
-            return (0, config_1.responFail)(badAccount.msg, badAccount.code);
+            return (0, config_1.responFail)('1006');
         }
         const data = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(data);
@@ -37,13 +34,15 @@ let TransController = class TransController {
         }
         catch (err) {
             magic_1.logger.error('game/bet参数错误', err);
-            return (0, config_1.responFail)(badParas.msg, badParas.code);
+            if (err.msg == 'eventTime格式错误')
+                return (0, config_1.responFail)('1004');
+            return (0, config_1.responFail)('1003');
         }
         if (gbd.account !== config_1.uInfo.account) {
-            return (0, config_1.responFail)(badAccount.msg, badAccount.code);
+            return (0, config_1.responFail)('1006');
         }
         if (config_1.uInfo.balance < gbd.amount) {
-            return (0, config_1.responFail)(balanceLess.msg, balanceLess.code);
+            return (0, config_1.responFail)('1005');
         }
         config_1.betRecord.push(gbd);
         config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, gbd.amount);
@@ -58,11 +57,12 @@ let TransController = class TransController {
         }
         catch (err) {
             magic_1.logger.error('game/endround参数错误', err);
-            return (0, config_1.responFail)(badParas.msg, badParas.code);
+            return (0, config_1.responFail)('1003');
         }
         if (ged.account !== config_1.uInfo.account) {
-            return (0, config_1.responFail)(badAccount.msg, badAccount.code);
+            return (0, config_1.responFail)('1006');
         }
+        magic_1.logger.info('game/endround-balance-前==', config_1.uInfo.balance);
         try {
             const ary = JSON.parse(ged.data);
             let total = 0;
@@ -75,15 +75,20 @@ let TransController = class TransController {
                 if (amount < 0) {
                     throw new Error("amount不能为负数");
                 }
-                total = (0, globalAction_1.numPlus)(total, amount);
+                if (amount > 0) {
+                    total = (0, globalAction_1.numPlus)(total, amount);
+                }
             }
             ;
-            config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, total);
+            if (total > 0) {
+                config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, total);
+            }
         }
         catch (err) {
             magic_1.logger.error('求total,err', err);
-            return (0, config_1.responFail)(badParas.msg, badParas.code);
+            return (0, config_1.responFail)('1003');
         }
+        magic_1.logger.info('game/endround-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
@@ -95,15 +100,19 @@ let TransController = class TransController {
         }
         catch (err) {
             magic_1.logger.error('game/rollout参数错误', err);
-            return (0, config_1.responFail)(badParas.msg, badParas.code);
+            if (err.msg == 'eventTime格式错误')
+                return (0, config_1.responFail)('1004');
+            return (0, config_1.responFail)('1003');
         }
         if (grod.account !== config_1.uInfo.account) {
-            return (0, config_1.responFail)(badAccount.msg, badAccount.code);
+            return (0, config_1.responFail)('1006');
         }
         if (config_1.uInfo.balance < grod.amount) {
-            return (0, config_1.responFail)(balanceLess.msg, balanceLess.code);
+            return (0, config_1.responFail)('1005');
         }
+        magic_1.logger.info('game/rollout-balance-前==', config_1.uInfo.balance);
         config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, grod.amount);
+        magic_1.logger.info('game/rollout-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
@@ -115,20 +124,24 @@ let TransController = class TransController {
         }
         catch (err) {
             magic_1.logger.error('game/takeall参数错误', err);
-            return (0, config_1.responFail)(badParas.msg, badParas.code);
+            if (err.msg == 'eventTime格式错误')
+                return (0, config_1.responFail)('1004');
+            return (0, config_1.responFail)('1003');
         }
         if (gtd.account !== config_1.uInfo.account) {
-            return (0, config_1.responFail)(badAccount.msg, badAccount.code);
+            return (0, config_1.responFail)('1006');
         }
         if (!config_1.uInfo.balance) {
-            return (0, config_1.responFail)(balanceLess.msg, balanceLess.code);
+            return (0, config_1.responFail)('1005');
         }
+        magic_1.logger.info('game/takeall-balance-前==', config_1.uInfo.balance);
         const obj = {
             amount: config_1.uInfo.balance,
             balance: 0,
             currency: config_1.uInfo.currency
         };
         config_1.uInfo.balance = 0;
+        magic_1.logger.info('game/takeall-balance-后==', config_1.uInfo.balance);
         return (0, config_1.responSess)(obj);
     }
     gameRollin(data) {
@@ -139,12 +152,14 @@ let TransController = class TransController {
         }
         catch (err) {
             magic_1.logger.error('game/rollin参数错误', err);
-            return (0, config_1.responFail)(badParas.msg, badParas.code);
+            return (0, config_1.responFail)('1003');
         }
         if (grid.account !== config_1.uInfo.account) {
-            return (0, config_1.responFail)(badAccount.msg, badAccount.code);
+            return (0, config_1.responFail)('1006');
         }
+        magic_1.logger.info('game/rollin-balance-前==', config_1.uInfo.balance);
         config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, grid.amount);
+        magic_1.logger.info('game/rollin-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
@@ -156,15 +171,19 @@ let TransController = class TransController {
         }
         catch (err) {
             magic_1.logger.error('game/debit参数错误', err);
-            return (0, config_1.responFail)(badParas.msg, badParas.code);
+            if (err.msg == 'eventTime格式错误')
+                return (0, config_1.responFail)('1004');
+            return (0, config_1.responFail)('1003');
         }
         if (gdbd.account !== config_1.uInfo.account) {
-            return (0, config_1.responFail)(badAccount.msg, badAccount.code);
+            return (0, config_1.responFail)('1006');
         }
         if (config_1.uInfo.balance < gdbd.amount) {
-            return (0, config_1.responFail)(balanceLess.msg, balanceLess.code);
+            return (0, config_1.responFail)('1005');
         }
+        magic_1.logger.info('game/debit-balance-前==', config_1.uInfo.balance);
         config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, gdbd.amount);
+        magic_1.logger.info('game/debit-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
@@ -176,12 +195,16 @@ let TransController = class TransController {
         }
         catch (err) {
             magic_1.logger.error('game/credit参数错误', err);
-            return (0, config_1.responFail)(badParas.msg, badParas.code);
+            if (err.msg == 'eventTime格式错误')
+                return (0, config_1.responFail)('1004');
+            return (0, config_1.responFail)('1003');
         }
         if (gcdd.account !== config_1.uInfo.account) {
-            return (0, config_1.responFail)(badAccount.msg, badAccount.code);
+            return (0, config_1.responFail)('1006');
         }
+        magic_1.logger.info('game/credit-balance-前==', config_1.uInfo.balance);
         config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, gcdd.amount);
+        magic_1.logger.info('game/credit-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
@@ -193,22 +216,32 @@ let TransController = class TransController {
         }
         catch (err) {
             magic_1.logger.error('user/payoff参数错误', err);
-            return (0, config_1.responFail)(badParas.msg, badParas.code);
+            if (err.msg == 'eventTime格式错误')
+                return (0, config_1.responFail)('1004');
+            return (0, config_1.responFail)('1003');
         }
         if (upfd.account !== config_1.uInfo.account) {
-            return (0, config_1.responFail)(badAccount.msg, badAccount.code);
+            return (0, config_1.responFail)('1006');
         }
+        magic_1.logger.info('user/payoff-balance-前==', config_1.uInfo.balance);
         config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, upfd.amount);
+        magic_1.logger.info('user/payoff-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
-    gameRefund(mtcode) {
-        magic_1.logger.info("game/refund传入参数::", mtcode);
+    gameRefund(data) {
+        magic_1.logger.info("game/refund传入参数::", data);
+        const { mtcode } = data.body;
+        if (!mtcode) {
+            return (0, config_1.responFail)('1003');
+        }
         const res = config_1.betRecord.find(t => t.mtcode === mtcode);
         if (!res) {
-            return (0, config_1.responFail)('Data not found.', '8');
+            return (0, config_1.responFail)('1014');
         }
+        magic_1.logger.info('game/refund-balance-前==', config_1.uInfo.balance);
         config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, res.amount);
+        magic_1.logger.info('game/refund-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
@@ -288,13 +321,12 @@ __decorate([
 __decorate([
     (0, magic_1.Post)('game/refund'),
     (0, magic_1.BareOut)(),
-    __param(0, (0, magic_1.Body)('mtcode')),
+    __param(0, (0, magic_1.CtxParams)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], TransController.prototype, "gameRefund", null);
 TransController = __decorate([
-    (0, magic_1.Controller)('transaction'),
-    (0, magic_1.Auth)()
+    (0, magic_1.Controller)('transaction')
 ], TransController);
 exports.default = TransController;

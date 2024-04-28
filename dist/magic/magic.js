@@ -30,9 +30,11 @@ class MagicFactory {
         this.behindThing = [wayOut_1.formatResponse];
         if (isInstance)
             throw new tools_1.JError("MagicFactory不可重复实例化");
-        const { controllers, middleware, middleAuth, schedule, initSocket, sslOpts } = opts;
+        const { controllers, middleware, middleAuth, resetRouErr, schedule, initSocket, sslOpts } = opts;
         this.setController(controllers);
         this.addMiddleware(middleware);
+        if (resetRouErr)
+            this.authThing = [resetRouErr];
         if (middleAuth)
             this.authThing.push(middleAuth);
         this.setSchedule(schedule);
@@ -41,7 +43,7 @@ class MagicFactory {
         isInstance = true;
     }
     setController(list) {
-        if (list.length)
+        if ((0, tools_1.notEmptyAry)(list))
             this.controllers = list;
     }
     setSchedule(clazz) {

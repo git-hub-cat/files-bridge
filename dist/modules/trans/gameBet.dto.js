@@ -51,7 +51,7 @@ __decorate([
 __decorate([
     IsNotEmpty(),
     IsString(eventTimeStr),
-    IsStrDate(),
+    IsStrDate('eventTime格式错误'),
     __metadata("design:type", String)
 ], GameBetDto.prototype, "eventTime", void 0);
 __decorate([
@@ -131,7 +131,7 @@ __decorate([
 __decorate([
     IsNotEmpty(),
     IsString(eventTimeStr),
-    IsStrDate(),
+    IsStrDate('eventTime格式错误'),
     __metadata("design:type", String)
 ], GameRolloutDto.prototype, "eventTime", void 0);
 __decorate([
@@ -174,7 +174,7 @@ __decorate([
 __decorate([
     IsNotEmpty(),
     IsString(eventTimeStr),
-    IsStrDate(),
+    IsStrDate('eventTime格式错误'),
     __metadata("design:type", String)
 ], GameTakeallDto.prototype, "eventTime", void 0);
 GameTakeallDto = __decorate([
@@ -191,6 +191,7 @@ __decorate([
 __decorate([
     IsNotEmpty(),
     IsString(eventTimeStr),
+    IsStrDate('eventTime格式错误'),
     __metadata("design:type", String)
 ], GameRollinDto.prototype, "eventTime", void 0);
 __decorate([
@@ -264,7 +265,7 @@ __decorate([
 __decorate([
     IsNotEmpty(),
     IsString(eventTimeStr),
-    IsStrDate(),
+    IsStrDate('eventTime格式错误'),
     __metadata("design:type", String)
 ], GameDebitDto.prototype, "eventTime", void 0);
 __decorate([
@@ -307,7 +308,7 @@ __decorate([
 __decorate([
     IsNotEmpty(),
     IsString(eventTimeStr),
-    IsStrDate(),
+    IsStrDate('eventTime格式错误'),
     __metadata("design:type", String)
 ], GameCreditDto.prototype, "eventTime", void 0);
 __decorate([
@@ -350,7 +351,7 @@ __decorate([
 __decorate([
     IsNotEmpty(),
     IsString(eventTimeStr),
-    IsStrDate(),
+    IsStrDate('eventTime格式错误'),
     __metadata("design:type", String)
 ], UserPayoffDto.prototype, "eventTime", void 0);
 __decorate([

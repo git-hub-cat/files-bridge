@@ -5,9 +5,11 @@ const modules_1 = require("./modules");
 const globalAction_1 = require("./utils/globalAction");
 const jwtAuth_1 = require("./middlewares/jwtAuth");
 const staticAssets_1 = require("./middlewares/staticAssets");
+const resetRouErr_1 = require("./middlewares/resetRouErr");
 const magic = new magic_1.MagicFactory({
     controllers: modules_1.default,
     middleAuth: jwtAuth_1.default,
+    resetRouErr: resetRouErr_1.default,
     middleware: [...staticAssets_1.default],
 });
 !async function () {
