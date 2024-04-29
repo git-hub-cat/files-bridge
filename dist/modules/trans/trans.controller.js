@@ -18,7 +18,8 @@ const globalAction_1 = require("../../utils/globalAction");
 const gameBet_dto_1 = require("./gameBet.dto");
 let TransController = class TransController {
     isMtcodeExist(arr, mtcode) {
-        return arr.some(t => t.mtcode === mtcode);
+        const res = arr.find(t => t.mtcode === mtcode);
+        return res ? res : null;
     }
     balance(account) {
         magic_1.logger.info("balance/传入参数::", account);
@@ -47,12 +48,17 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1005');
         }
         magic_1.logger.info('game/bet-balance-前==', config_1.uInfo.balance);
-        if (!this.isMtcodeExist(config_1.bRecord.gameBets, gbd.mtcode)) {
+        let obj = {};
+        const exist = this.isMtcodeExist(config_1.bRecord.gameBets, gbd.mtcode);
+        if (!exist) {
             config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, gbd.amount);
-            config_1.bRecord.gameBets.push(gbd);
+            config_1.bRecord.gameBets.push(Object.assign(Object.assign({}, gbd), { outAmount: config_1.uInfo.balance }));
+            obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        }
+        else {
+            obj = { balance: exist.outAmount, currency: config_1.uInfo.currency };
         }
         magic_1.logger.info('game/bet-balance-后==', config_1.uInfo.balance);
-        const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameEndround(data) {
@@ -86,9 +92,13 @@ let TransController = class TransController {
         const ary = JSON.parse(ged.data);
         let total = 0;
         for (const item of ary) {
-            if (!this.isMtcodeExist(config_1.bRecord.gameEndrounds, item.mtcode)) {
+            const exist = this.isMtcodeExist(config_1.bRecord.gameEndrounds, item.mtcode);
+            if (!exist) {
                 total = (0, globalAction_1.numPlus)(total, item.amount);
                 config_1.bRecord.gameEndrounds.push(Object.assign(Object.assign({}, ged), item));
+            }
+            else {
+                total = (0, globalAction_1.numPlus)(total, exist.amount);
             }
         }
         if (total > 0) {
@@ -117,12 +127,17 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1005');
         }
         magic_1.logger.info('game/rollout-balance-前==', config_1.uInfo.balance);
-        if (!this.isMtcodeExist(config_1.bRecord.gameRollouts, grod.mtcode)) {
+        let obj = {};
+        const exist = this.isMtcodeExist(config_1.bRecord.gameRollouts, grod.mtcode);
+        if (!exist) {
             config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, grod.amount);
-            config_1.bRecord.gameRollouts.push(grod);
+            config_1.bRecord.gameRollouts.push(Object.assign(Object.assign({}, grod), { outAmount: config_1.uInfo.balance }));
+            obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        }
+        else {
+            obj = { balance: exist.outAmount, currency: config_1.uInfo.currency };
         }
         magic_1.logger.info('game/rollout-balance-后==', config_1.uInfo.balance);
-        const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameTakeall(data) {
@@ -140,6 +155,7 @@ let TransController = class TransController {
         if (gtd.account !== config_1.uInfo.account) {
             return (0, config_1.responFail)('1006');
         }
+        config_1.bRecord.gameTakealls.push(gtd);
         magic_1.logger.info('game/takeall-balance-前==', config_1.uInfo.balance);
         const obj = {
             amount: config_1.uInfo.balance,
@@ -166,12 +182,17 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1006');
         }
         magic_1.logger.info('game/rollin-balance-前==', config_1.uInfo.balance);
-        if (!this.isMtcodeExist(config_1.bRecord.gameRollins, grid.mtcode)) {
+        let obj = {};
+        const exist = this.isMtcodeExist(config_1.bRecord.gameRollins, grid.mtcode);
+        if (!exist) {
             config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, grid.amount);
-            config_1.bRecord.gameRollins.push(grid);
+            config_1.bRecord.gameRollins.push(Object.assign(Object.assign({}, grid), { outAmount: config_1.uInfo.balance }));
+            obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        }
+        else {
+            obj = { balance: exist.outAmount, currency: config_1.uInfo.currency };
         }
         magic_1.logger.info('game/rollin-balance-后==', config_1.uInfo.balance);
-        const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameDebit(data) {
@@ -193,12 +214,17 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1005');
         }
         magic_1.logger.info('game/debit-balance-前==', config_1.uInfo.balance);
-        if (!this.isMtcodeExist(config_1.bRecord.gameDebits, gdbd.mtcode)) {
+        let obj = {};
+        const exist = this.isMtcodeExist(config_1.bRecord.gameDebits, gdbd.mtcode);
+        if (!exist) {
             config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, gdbd.amount);
-            config_1.bRecord.gameDebits.push(gdbd);
+            config_1.bRecord.gameDebits.push(Object.assign(Object.assign({}, gdbd), { outAmount: config_1.uInfo.balance }));
+            obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        }
+        else {
+            obj = { balance: exist.outAmount, currency: config_1.uInfo.currency };
         }
         magic_1.logger.info('game/debit-balance-后==', config_1.uInfo.balance);
-        const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameCredit(data) {
@@ -217,12 +243,17 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1006');
         }
         magic_1.logger.info('game/credit-balance-前==', config_1.uInfo.balance);
-        if (!this.isMtcodeExist(config_1.bRecord.gameCredits, gcdd.mtcode)) {
+        let obj = {};
+        const exist = this.isMtcodeExist(config_1.bRecord.gameCredits, gcdd.mtcode);
+        if (!exist) {
             config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, gcdd.amount);
-            config_1.bRecord.gameCredits.push(gcdd);
+            config_1.bRecord.gameCredits.push(Object.assign(Object.assign({}, gcdd), { outAmount: config_1.uInfo.balance }));
+            obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        }
+        else {
+            obj = { balance: exist.outAmount, currency: config_1.uInfo.currency };
         }
         magic_1.logger.info('game/credit-balance-后==', config_1.uInfo.balance);
-        const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     userPayoff(data) {
@@ -241,12 +272,17 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1006');
         }
         magic_1.logger.info('user/payoff-balance-前==', config_1.uInfo.balance);
-        if (!this.isMtcodeExist(config_1.bRecord.userPayoffs, upfd.mtcode)) {
+        let obj = {};
+        const exist = this.isMtcodeExist(config_1.bRecord.userPayoffs, upfd.mtcode);
+        if (!exist) {
             config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, upfd.amount);
-            config_1.bRecord.userPayoffs.push(upfd);
+            config_1.bRecord.userPayoffs.push(Object.assign(Object.assign({}, upfd), { outAmount: config_1.uInfo.balance }));
+            obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+        }
+        else {
+            obj = { balance: exist.outAmount, currency: config_1.uInfo.currency };
         }
         magic_1.logger.info('user/payoff-balance-后==', config_1.uInfo.balance);
-        const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameRefund(data) {
@@ -256,14 +292,22 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1003');
         }
         magic_1.logger.info("bRecord.gameBets==", config_1.bRecord.gameBets);
-        const res = config_1.bRecord.gameBets.find(t => t.mtcode === mtcode);
+        const res = this.isMtcodeExist(config_1.bRecord.gameBets, mtcode);
         if (!res) {
             return (0, config_1.responFail)('1014');
         }
         magic_1.logger.info('game/refund-balance-前==', config_1.uInfo.balance);
-        config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, res.amount);
+        let obj = {};
+        const exist = this.isMtcodeExist(config_1.bRecord.gameRefunds, mtcode);
+        if (!exist) {
+            config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, res.amount);
+            obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
+            config_1.bRecord.gameRefunds.push({ mtcode, balance: config_1.uInfo.balance });
+        }
+        else {
+            obj = { balance: exist.balance, currency: config_1.uInfo.currency };
+        }
         magic_1.logger.info('game/refund-balance-后==', config_1.uInfo.balance);
-        const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
 };
