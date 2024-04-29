@@ -15,9 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const magic_1 = require("../../magic");
 const config_1 = require("./config");
 const globalAction_1 = require("../../utils/globalAction");
-;
 const gameBet_dto_1 = require("./gameBet.dto");
 let TransController = class TransController {
+    isMtcodeExist(arr, mtcode) {
+        return arr.some(t => t.mtcode === mtcode);
+    }
     balance(account) {
         magic_1.logger.info("balance/传入参数::", account);
         if (account !== config_1.uInfo.account) {
@@ -27,14 +29,14 @@ let TransController = class TransController {
         return (0, config_1.responSess)(data);
     }
     gameBet(data) {
-        magic_1.logger.info("game/bet传入参数::", data);
         const gbd = data.body;
+        magic_1.logger.info("game/bet传入参数::", gbd);
         try {
             gameBet_dto_1.GameBetDto.prototype.verify(gbd);
         }
         catch (err) {
             magic_1.logger.error('game/bet参数错误', err);
-            if (err.msg == 'eventTime格式错误')
+            if (err.msg == gameBet_dto_1.eventTimeErr)
                 return (0, config_1.responFail)('1004');
             return (0, config_1.responFail)('1003');
         }
@@ -44,63 +46,67 @@ let TransController = class TransController {
         if (config_1.uInfo.balance < gbd.amount) {
             return (0, config_1.responFail)('1005');
         }
-        config_1.betRecord.push(gbd);
-        config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, gbd.amount);
+        magic_1.logger.info('game/bet-balance-前==', config_1.uInfo.balance);
+        if (!this.isMtcodeExist(config_1.bRecord.gameBets, gbd.mtcode)) {
+            config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, gbd.amount);
+            config_1.bRecord.gameBets.push(gbd);
+        }
+        magic_1.logger.info('game/bet-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameEndround(data) {
-        magic_1.logger.info("game/endround传入参数::", data);
         const ged = data.body;
+        magic_1.logger.info("game/endround传入参数::", ged);
         try {
             gameBet_dto_1.GameEndroundDto.prototype.verify(ged);
         }
         catch (err) {
             magic_1.logger.error('game/endround参数错误', err);
+            if (err.msg == gameBet_dto_1.createTimeErr)
+                return (0, config_1.responFail)('1004');
+            return (0, config_1.responFail)('1003');
+        }
+        try {
+            const ary = JSON.parse(ged.data);
+            for (const item of ary) {
+                gameBet_dto_1.EndroundData.prototype.verify(item);
+            }
+        }
+        catch (err) {
+            magic_1.logger.error('game/endround-data参数错误==', err);
+            if (err.msg == gameBet_dto_1.eventTimeErr)
+                return (0, config_1.responFail)('1004');
             return (0, config_1.responFail)('1003');
         }
         if (ged.account !== config_1.uInfo.account) {
             return (0, config_1.responFail)('1006');
         }
         magic_1.logger.info('game/endround-balance-前==', config_1.uInfo.balance);
-        try {
-            const ary = JSON.parse(ged.data);
-            let total = 0;
-            for (const item of ary) {
-                let amount = item.amount;
-                if (!(0, globalAction_1.isNumber)(amount)) {
-                    throw new Error("amount需要为数值");
-                }
-                amount = Number(amount);
-                if (amount < 0) {
-                    throw new Error("amount不能为负数");
-                }
-                if (amount > 0) {
-                    total = (0, globalAction_1.numPlus)(total, amount);
-                }
-            }
-            ;
-            if (total > 0) {
-                config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, total);
+        const ary = JSON.parse(ged.data);
+        let total = 0;
+        for (const item of ary) {
+            if (!this.isMtcodeExist(config_1.bRecord.gameEndrounds, item.mtcode)) {
+                total = (0, globalAction_1.numPlus)(total, item.amount);
+                config_1.bRecord.gameEndrounds.push(Object.assign(Object.assign({}, ged), item));
             }
         }
-        catch (err) {
-            magic_1.logger.error('求total,err', err);
-            return (0, config_1.responFail)('1003');
+        if (total > 0) {
+            config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, total);
         }
         magic_1.logger.info('game/endround-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameRollout(data) {
-        magic_1.logger.info("game/rollout传入参数::", data);
         const grod = data.body;
+        magic_1.logger.info("game/rollout传入参数::", grod);
         try {
             gameBet_dto_1.GameRolloutDto.prototype.verify(grod);
         }
         catch (err) {
             magic_1.logger.error('game/rollout参数错误', err);
-            if (err.msg == 'eventTime格式错误')
+            if (err.msg == gameBet_dto_1.eventTimeErr)
                 return (0, config_1.responFail)('1004');
             return (0, config_1.responFail)('1003');
         }
@@ -111,28 +117,28 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1005');
         }
         magic_1.logger.info('game/rollout-balance-前==', config_1.uInfo.balance);
-        config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, grod.amount);
+        if (!this.isMtcodeExist(config_1.bRecord.gameRollouts, grod.mtcode)) {
+            config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, grod.amount);
+            config_1.bRecord.gameRollouts.push(grod);
+        }
         magic_1.logger.info('game/rollout-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameTakeall(data) {
-        magic_1.logger.info("game/takeall传入参数::", data);
         const gtd = data.body;
+        magic_1.logger.info("game/takeall传入参数::", gtd);
         try {
             gameBet_dto_1.GameTakeallDto.prototype.verify(gtd);
         }
         catch (err) {
             magic_1.logger.error('game/takeall参数错误', err);
-            if (err.msg == 'eventTime格式错误')
+            if (err.msg == gameBet_dto_1.eventTimeErr)
                 return (0, config_1.responFail)('1004');
             return (0, config_1.responFail)('1003');
         }
         if (gtd.account !== config_1.uInfo.account) {
             return (0, config_1.responFail)('1006');
-        }
-        if (!config_1.uInfo.balance) {
-            return (0, config_1.responFail)('1005');
         }
         magic_1.logger.info('game/takeall-balance-前==', config_1.uInfo.balance);
         const obj = {
@@ -145,33 +151,38 @@ let TransController = class TransController {
         return (0, config_1.responSess)(obj);
     }
     gameRollin(data) {
-        magic_1.logger.info("game/rollin传入参数::", data);
         const grid = data.body;
+        magic_1.logger.info("game/rollin传入参数::", grid);
         try {
             gameBet_dto_1.GameRollinDto.prototype.verify(grid);
         }
         catch (err) {
             magic_1.logger.error('game/rollin参数错误', err);
+            if (err.msg == gameBet_dto_1.eventTimeErr || err.msg == gameBet_dto_1.createTimeErr)
+                return (0, config_1.responFail)('1004');
             return (0, config_1.responFail)('1003');
         }
         if (grid.account !== config_1.uInfo.account) {
             return (0, config_1.responFail)('1006');
         }
         magic_1.logger.info('game/rollin-balance-前==', config_1.uInfo.balance);
-        config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, grid.amount);
+        if (!this.isMtcodeExist(config_1.bRecord.gameRollins, grid.mtcode)) {
+            config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, grid.amount);
+            config_1.bRecord.gameRollins.push(grid);
+        }
         magic_1.logger.info('game/rollin-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameDebit(data) {
-        magic_1.logger.info("game/debit传入参数::", data);
         const gdbd = data.body;
+        magic_1.logger.info("game/debit传入参数::", gdbd);
         try {
             gameBet_dto_1.GameDebitDto.prototype.verify(gdbd);
         }
         catch (err) {
             magic_1.logger.error('game/debit参数错误', err);
-            if (err.msg == 'eventTime格式错误')
+            if (err.msg == gameBet_dto_1.eventTimeErr)
                 return (0, config_1.responFail)('1004');
             return (0, config_1.responFail)('1003');
         }
@@ -182,20 +193,23 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1005');
         }
         magic_1.logger.info('game/debit-balance-前==', config_1.uInfo.balance);
-        config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, gdbd.amount);
+        if (!this.isMtcodeExist(config_1.bRecord.gameDebits, gdbd.mtcode)) {
+            config_1.uInfo.balance = (0, globalAction_1.numMinus)(config_1.uInfo.balance, gdbd.amount);
+            config_1.bRecord.gameDebits.push(gdbd);
+        }
         magic_1.logger.info('game/debit-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameCredit(data) {
-        magic_1.logger.info("game/credit传入参数::", data);
         const gcdd = data.body;
+        magic_1.logger.info("game/credit传入参数::", gcdd);
         try {
             gameBet_dto_1.GameCreditDto.prototype.verify(gcdd);
         }
         catch (err) {
             magic_1.logger.error('game/credit参数错误', err);
-            if (err.msg == 'eventTime格式错误')
+            if (err.msg == gameBet_dto_1.eventTimeErr)
                 return (0, config_1.responFail)('1004');
             return (0, config_1.responFail)('1003');
         }
@@ -203,20 +217,23 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1006');
         }
         magic_1.logger.info('game/credit-balance-前==', config_1.uInfo.balance);
-        config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, gcdd.amount);
+        if (!this.isMtcodeExist(config_1.bRecord.gameCredits, gcdd.mtcode)) {
+            config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, gcdd.amount);
+            config_1.bRecord.gameCredits.push(gcdd);
+        }
         magic_1.logger.info('game/credit-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     userPayoff(data) {
-        magic_1.logger.info("user/payoff传入参数::", data);
         const upfd = data.body;
+        magic_1.logger.info("user/payoff传入参数::", upfd);
         try {
             gameBet_dto_1.UserPayoffDto.prototype.verify(upfd);
         }
         catch (err) {
             magic_1.logger.error('user/payoff参数错误', err);
-            if (err.msg == 'eventTime格式错误')
+            if (err.msg == gameBet_dto_1.eventTimeErr)
                 return (0, config_1.responFail)('1004');
             return (0, config_1.responFail)('1003');
         }
@@ -224,18 +241,22 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1006');
         }
         magic_1.logger.info('user/payoff-balance-前==', config_1.uInfo.balance);
-        config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, upfd.amount);
+        if (!this.isMtcodeExist(config_1.bRecord.userPayoffs, upfd.mtcode)) {
+            config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, upfd.amount);
+            config_1.bRecord.userPayoffs.push(upfd);
+        }
         magic_1.logger.info('user/payoff-balance-后==', config_1.uInfo.balance);
         const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameRefund(data) {
-        magic_1.logger.info("game/refund传入参数::", data);
+        magic_1.logger.info("game/refund传入参数::", data.body);
         const { mtcode } = data.body;
         if (!mtcode) {
             return (0, config_1.responFail)('1003');
         }
-        const res = config_1.betRecord.find(t => t.mtcode === mtcode);
+        magic_1.logger.info("bRecord.gameBets==", config_1.bRecord.gameBets);
+        const res = config_1.bRecord.gameBets.find(t => t.mtcode === mtcode);
         if (!res) {
             return (0, config_1.responFail)('1014');
         }
