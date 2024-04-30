@@ -159,14 +159,21 @@ let TransController = class TransController {
         if (gtd.account !== config_1.uInfo.account) {
             return (0, config_1.responFail)('1006');
         }
-        config_1.bRecord.gameTakealls.push(Object.assign(Object.assign({}, gtd), { amount: config_1.uInfo.balance }));
         magic_1.logger.info('game/takeall-balance-前==', config_1.uInfo.balance);
-        const obj = {
-            amount: config_1.uInfo.balance,
-            balance: 0,
-            currency: config_1.uInfo.currency
-        };
-        config_1.uInfo.balance = 0;
+        const exist = this.isMtcodeExist(config_1.bRecord.gameTakealls, gtd.mtcode);
+        let obj = {};
+        if (!exist) {
+            obj = {
+                amount: config_1.uInfo.balance,
+                balance: 0,
+                currency: config_1.uInfo.currency
+            };
+            config_1.bRecord.gameTakealls.push(Object.assign(Object.assign({}, gtd), { outAmount: config_1.uInfo.balance }));
+            config_1.uInfo.balance = 0;
+        }
+        else {
+            obj = { amount: exist.outAmount, balance: 0, currency: config_1.uInfo.currency };
+        }
         magic_1.logger.info('game/takeall-balance-后==', config_1.uInfo.balance);
         return (0, config_1.responSess)(obj);
     }
@@ -397,6 +404,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TransController.prototype, "gameRefund", null);
 TransController = __decorate([
-    (0, magic_1.Controller)('transaction')
+    (0, magic_1.Controller)('transaction'),
+    (0, magic_1.Auth)()
 ], TransController);
 exports.default = TransController;
