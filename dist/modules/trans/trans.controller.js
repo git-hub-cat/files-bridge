@@ -90,22 +90,26 @@ let TransController = class TransController {
         }
         magic_1.logger.info('game/endround-balance-前==', config_1.uInfo.balance);
         const ary = JSON.parse(ged.data);
-        let total = 0;
-        for (const item of ary) {
-            const exist = this.isMtcodeExist(config_1.bRecord.gameEndrounds, item.mtcode);
-            if (!exist) {
+        const temps = [];
+        let obj = {};
+        const exist = this.isMtcodeExist(config_1.bRecord.gameEndrounds, ary[0].mtcode);
+        if (!exist) {
+            let total = 0;
+            for (const item of ary) {
                 total = (0, globalAction_1.numPlus)(total, item.amount);
-                config_1.bRecord.gameEndrounds.push(Object.assign(Object.assign({}, ged), item));
+                temps.push(Object.assign(Object.assign({}, ged), item));
             }
-            else {
-                total = (0, globalAction_1.numPlus)(total, exist.amount);
+            if (total > 0) {
+                config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, total);
             }
+            temps.forEach(t => t.balance = config_1.uInfo.balance);
+            config_1.bRecord.gameEndrounds.push(...temps);
+            obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         }
-        if (total > 0) {
-            config_1.uInfo.balance = (0, globalAction_1.numPlus)(config_1.uInfo.balance, total);
+        else {
+            obj = { balance: exist.balance, currency: config_1.uInfo.currency };
         }
         magic_1.logger.info('game/endround-balance-后==', config_1.uInfo.balance);
-        const obj = { balance: config_1.uInfo.balance, currency: config_1.uInfo.currency };
         return (0, config_1.responSess)(obj);
     }
     gameRollout(data) {
@@ -155,7 +159,7 @@ let TransController = class TransController {
         if (gtd.account !== config_1.uInfo.account) {
             return (0, config_1.responFail)('1006');
         }
-        config_1.bRecord.gameTakealls.push(gtd);
+        config_1.bRecord.gameTakealls.push(Object.assign(Object.assign({}, gtd), { amount: config_1.uInfo.balance }));
         magic_1.logger.info('game/takeall-balance-前==', config_1.uInfo.balance);
         const obj = {
             amount: config_1.uInfo.balance,
@@ -292,7 +296,8 @@ let TransController = class TransController {
             return (0, config_1.responFail)('1003');
         }
         magic_1.logger.info("bRecord.gameBets==", config_1.bRecord.gameBets);
-        const res = this.isMtcodeExist(config_1.bRecord.gameBets, mtcode);
+        const list = [...config_1.bRecord.gameBets, ...config_1.bRecord.gameRollouts, ...config_1.bRecord.gameTakealls];
+        const res = this.isMtcodeExist(list, mtcode);
         if (!res) {
             return (0, config_1.responFail)('1014');
         }
