@@ -29,7 +29,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PlayerController.prototype, "check", null);
 PlayerController = __decorate([
-    (0, magic_1.Controller)('player'),
-    (0, magic_1.Auth)()
+    (0, magic_1.Controller)('player')
 ], PlayerController);
 exports.default = PlayerController;

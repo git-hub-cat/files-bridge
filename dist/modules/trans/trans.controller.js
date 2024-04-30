@@ -397,7 +397,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TransController.prototype, "gameRefund", null);
 TransController = __decorate([
-    (0, magic_1.Controller)('transaction'),
-    (0, magic_1.Auth)()
+    (0, magic_1.Controller)('transaction')
 ], TransController);
 exports.default = TransController;
